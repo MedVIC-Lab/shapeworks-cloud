@@ -50,8 +50,11 @@
       become_user: root
     - name: Download shapeworks studio
       ansible.builtin.shell: |
-        export url=$(curl -s https://api.github.com/repos/SCIInstitute/ShapeWorks/releases | grep -o "http.*dev-linux.*.gz");
-        curl -L -o /tmp/shapeworks.tgz $url
+        set -eu
+        curl --fail --location --retry 3 \
+          https://github.com/SCIInstitute/ShapeWorks/releases/download/v6.7.0/ShapeWorks-v6.7.0-linux.tar.gz \
+          --output /tmp/shapeworks.tgz
+        echo '80cc1609dfac3cf18a3931ad340fe0630939f94501e3b7b8aeab063fc2df5737  /tmp/shapeworks.tgz' | sha256sum --check -
         mkdir -p /opt/shapeworks
         rm -rf /opt/shapeworks
         mkdir /opt/shapeworks

@@ -29,8 +29,10 @@ RUN curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -
 # over top of this directory, the .egg-link in site-packages resolves to the mounted directory
 # and all package modules are importable.
 
-RUN export url=$(curl -s https://api.github.com/repos/SCIInstitute/ShapeWorks/releases | grep -o "http.*dev-linux.*.gz"); \
-    curl -L -o /tmp/shapeworks.tgz $url
+RUN curl --fail --location --retry 3 \
+    https://github.com/SCIInstitute/ShapeWorks/releases/download/v6.7.0/ShapeWorks-v6.7.0-linux.tar.gz \
+    --output /tmp/shapeworks.tgz && \
+    echo '80cc1609dfac3cf18a3931ad340fe0630939f94501e3b7b8aeab063fc2df5737  /tmp/shapeworks.tgz' | sha256sum --check -
 RUN mkdir /opt/shapeworks && \
     tar -zxvf /tmp/shapeworks.tgz -C /opt/shapeworks --strip-components 1 && \
     rm /tmp/shapeworks.tgz
